@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Estadisticas! Survey today!{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10">
+            <div class="col-2 mx-auto">
+            <img src="LOGO.JPG" class="mx-auto"></img>
+            </div>
+        </div>
+    </div>
+
+ {% if survey is not defined %} <!-- Muestra un selec para elegir encuesta-->
+    <div class="row">
+        <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+            <div class="emensa mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+                <form action="/estadisticas" method="POST">
+                    <div class="row">
+                        <div class="col-9 mx-auto">
+                            Selecciona encuesta:
+                                    <select class="form-control" name="surveySelected">
+                                        {% for surveys in all_survey %}
+                                            <option value="{{surveys.id}}">{{surveys.title}}</option>
+                                        {% endfor %}
+                                    </select>
+                            <br><input type="submit" name="selectedsurvey" value="Seleccionar encuesta" class="btn btn-lg btn-primary active mt-4">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+     {% if survey is defined %} 
+        {% if all_answer is not defined %} <!-- Se muestran las estadisticas generales y booleanas de la encuesta y unos selects para las preguntas de tipo fecha y texto -->
+        <div class="row">
+            <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+                <div class="emensa mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+                    <h3><strong>{{survey.title}}</strong></h3>
+                    {% if surveyed == 0 %}
+                        <p>Esta encuesta no tiene estadisticas ya que aún no la contestaron los usuarios.<p>
+                    {% else %}
+                        <p><strong>Indice de particiopacion:</strong> {{surveyed}} participantes.<br> Una participación del {{percentageuser}}%<p>
+                        {% if averageAge is defined %}
+                        <p><strong>Media de edad:</strong> {{averageAge}} años.</p>
+                        {% endif %}
+                        <hr>
+                        {% if booleanQuestions is not empty %}
+                         <h3><strong> Estadisticas de las preguntas booleanas</strong></h3>
+                           {% for thisresult in resultsBoolean  %}
+                                <h5><strong>{{thisresult.questionboolean}}</strong></h5>
+                                <p>Porcentajes:</p>
+                                <p> Un {{thisresult.pertrue}}% de los usuarios dijo <strong>Si</strong><br>
+                                Exactamente {{thisresult.ntrue}}<br></p>
+                                <p> Un {{thisresult.perfalse}}% de los usuarios dijo <strong>No</strong><br>
+                                Exactamente {{thisresult.nfalse}}<br></p>
+                                <hr>
+                            {% endfor %}
+                        {% endif %}
+                            {% if textQuestions is not empty %}
+                            <h3><strong> Mostrar las respuestas de tipo texto</strong></h3>
+                            <form action="/showTypeText" method="POST">
+                                <div class="row">
+                                   <div class="col-9 mx-auto">
+                                       Selecciona pregunta:
+                                           <select class="form-control" name="questionSelected">
+                                             {% for question in textQuestions %}
+                                                <option value="{{question.id}}">{{question.thequest}}</option>
+                                             {% endfor %}
+                                            </select>
+                                            <input type="hidden" name="surveySelected" value="{{survey.id}}">
+                                           
+                                        <input type="submit" name="selectedQuestion" value="Seleccionar pregunta" class="btn btn-lg btn-primary active mt-4">
+                                    </div>
+                                </div>
+                            </form>
+                            <hr>
+                            {% endif %}
+                            {% if dateQuestions is not empty %}
+                            <h3><strong> Mostrar las respuestas de tipo Date</strong></h3>
+                            <form action="/showTypeDate" method="POST">
+                                <div class="row">
+                                   <div class="col-9 mx-auto">
+                                       Selecciona pregunta:
+                                           <select class="form-control" name="questionSelected">
+                                             {% for questionDate in dateQuestions %}
+                                                <option value="{{questionDate.id}}">{{questionDate.thequest}}</option>
+                                             {% endfor %}
+                                            </select>
+                                            <input type="hidden" name="surveySelected" value="{{survey.id}}">
+                                           
+                                        <input type="submit" name="selectedQuestion" value="Seleccionar pregunta" class="btn btn-lg btn-primary active mt-4">
+                                    </div>
+                                </div>
+                            </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endif %}
+        {% if all_answer is defined %} 
+            {% if thisQuestion is defined %} <!--Muestra las respuestas a una pregunta tipo texto-->
+                <div class="row">
+                    <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+                        <div class="emensa mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+                            <h3><strong>Resultados tipos texto</strong></h3>
+                            <h4><strong>{{thisQuestion.thequest}}</strong></h4>
+                             {% for thisAnswer in all_answer %}
+                               <p>{{thisAnswer.theAnswer}}</p>
+                               <hr>
+                             {% endfor %}
+                            <button class="btn btn-lg btn-primary" onclick="window.history.back()">Volver</button>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if thisQuestionDate is defined %} <!--Muestra las respuestas a una pregunta tipo fecha-->
+                <div class="row">
+                    <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+                        <div class="emensa mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+                            h3><strong>Resultados tipos fecha</strong></h3>
+                            <h4><strong>{{thisQuestionDate.thequest}}</strong></h4>
+                             {% for thisAnswer in all_answer %}
+                               <p>{{thisAnswer.theAnswer}}</p>
+                               <hr>
+                             {% endfor %}
+                            <button class="btn btn-lg btn-primary" onclick="window.history.back()">Volver</button>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+     {% endif %}
+{% endblock %}

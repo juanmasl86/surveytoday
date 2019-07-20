@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administracion! Survey today!{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-10">
+            <div class="col-2 mx-auto">
+            <img src="LOGO.JPG" class="mx-auto"></img>
+            <h1 class="mx-auto">Administracion!!!</h1>
+            </div>
+        </div>
+        <!-- Se muestran todos los formularios de todas las acciones del administrador para dar de alta -->
+    </div><div class="row">
+            <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+                <div class="cserv mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+                <h3>CREAR ENCUESTA</h3>
+                    <form action="./makeSurvey" enctype="multipart/form-data" method="POST">
+                        <div class="row">
+                            <div class="col-9 mx-auto">
+                                Titulo:
+                                    <input name="title" type="text" class="form-control">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-9 mx-auto mt-4">
+                                 <input type="submit" name="newSurvey" value="Enviar Encuesta" class="btn btn-lg btn-primary active">
+                            </div>
+                        </div>
+                    </form>
+                    <a name="createsurwey"></a>
+                </div>
+            </div>
+        </div>
+<div class="row">
+    <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+        <div class="emensa mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+            <h3>DAR ALTA PREGUTAS</h3>
+                <form action="./makeQuestion" method="POST">
+                    <div class="row">
+                        <div class="col-9 mx-auto">
+                            Introduzca la pregunta:
+                                    <input name="question" type="text" class="form-control">
+                            Tipo de respuesta:
+                                    <select class="form-control" name="typeAnswer">
+                                            <option value="boolean">Boleano</option>
+                                            <option value="text">Texto</option>
+                                            <option value="date">Fecha</option>
+                                    </select>
+
+                            <input type="submit" name="newQuestion" value="Enviar pregunta" class="btn btn-lg btn-primary active mt-4">
+                        </div>
+                    </div>
+                </form>
+            <a name="mensajes"></a>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-7 col-lg-9 col-md-10 col-sm-12 mx-auto">
+        <div class="emensa mx-5 mb-2 p-5 border rounded border-dark bg-login container-options">
+            <h3>AÑADIR PREGUNTAS A UNA ENCUESTA</h3>
+            <p>Las preguntas asignadas a una encuesta no se podrán agregar a otra porque sino los resultados de las encuestas no serian fiables.</p>
+            <p>Por eso si una pregunta se quiere reutilizar para otra encuesta habrá que añadirla nuevamente para que esta aparezca en esta lista.</p>
+                <form action="./addQuestion" method="POST">
+                    <div class="row">
+                        <div class="col-9 mx-auto">
+                           <strong>Encuesta:</strong>
+                                    <select class="form-control" name="theSurvey">
+                                        {% for surveys in all_survey %}
+                                            <option value="{{surveys.id}}">{{surveys.title}}</option>
+                                        {% endfor %}
+                                    </select><br>
+                            <strong>Selecciona preguntas:</strong><br>
+                                        {% if finalarray is empty %} <!--Si no hay preguntas declaradas en la bd o estan todas asignadas muestra este msg -->
+                                        <P>No hay preguntas sin asignar</P>
+                                        {% else %}
+                                        {% for questions in finalarray %}
+                                            <input type="checkbox" name="thequestions[]" value="{{questions.id}}"/> {{questions.Thequest}} | Tipo: {{questions.Type}}<br>
+                                        {% endfor %}
+                                        {% endif %}
+                            <input type="submit" name="confirmSurvey" value="Confirmar encuesta" class="btn btn-lg btn-primary active mt-4">
+                        </div>
+                    </div>
+                </form>
+                 <a name="mensajes"></a>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

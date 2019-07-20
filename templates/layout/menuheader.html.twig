@@ -1,0 +1,13 @@
+{% if (user is defined) and (user != 'anon.') %}
+    {{user.getEmail}} <button class="btn btn-lg btn-primary" onclick="window.location.href='/logout'">Logout</button>
+    {% if is_granted('ROLE_USER') %}
+        <button class="btn btn-lg btn-primary" onclick="window.location.href='/'">Inicio</button>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+       <button class="btn btn-lg btn-primary" onclick="window.location.href='/administracion'">Administracion</button>
+       <button class="btn btn-lg btn-primary" onclick="window.location.href='/estadisticas'">Estadisticas</button>
+       <button class="btn btn-lg btn-primary" onclick="window.location.href='/'">Inicio</button>
+    {% endif %}
+{% else %}
+    <button class="btn btn-lg btn-primary mb-5" onclick="window.location.href='/login'">Login</button><button class="btn btn-lg btn-primary ml-2 mb-5" onclick="window.location.href='/register'">Registro</button> 
+{% endif %}
